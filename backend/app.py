@@ -19,9 +19,7 @@ CORS(app)
 chat_history = []
 extracted_text = ""
 
-# List of common greetings
 GREETINGS = ["hello", "hi", "good morning", "good afternoon", "good evening", "hey", "how are you"]
-
 
 @app.route("/upload", methods=["POST"])
 def upload_pdf():
@@ -50,7 +48,6 @@ def upload_pdf():
         print("PDF Processing Error:", str(e))
         return jsonify({"error": "Error processing PDF"}), 500
 
-
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
@@ -65,13 +62,13 @@ def chat():
 
         # Check if input is a greeting
         if any(greet in user_input for greet in GREETINGS):
-            response_text = "Hello! How can I assist you today?"
+             response_text = "Hello! How can I assist you today?"
         else:
             # Append user input to chat history
             chat_history.append({"role": "user", "parts": [user_input]})
 
-            # Combine extracted text with user query
-            context = f"Document Info:\n{extracted_text}\n\nUser Query: {user_input} ,generate output in 5 word,comunicate intelligently with the user"
+            # Combine extracted text with user query and enhance prompt for intelligent interaction
+            context = f"Document Info:\n{extracted_text}\n\nUser Query: {user_input}\n\nPlease respond intelligently to the user, considering the document content. Ensure concise and relevant answers if possible give response in five words. Maintain a natural and engaging conversation. If the user asks which brand it is, provide a suitable answer based on the document content."
 
             # Generate response with document context
             response = model.generate_content(context)
@@ -85,7 +82,6 @@ def chat():
     except Exception as e:
         print("Error:", str(e))
         return jsonify({"error": "Internal server error"}), 500
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
